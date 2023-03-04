@@ -1,0 +1,36 @@
+# Folders
+[Bb]in/
+[Oo]bj/
+
+# Files
+*.log
+*.UserSettings
+
+# JetBrains Rider
+.idea/
+*.DotSettings*
+
+# MonoDevelop
+*.userprefs
+
+# Visual Studio
+.vs/
+.vsconfig
+
+# Visual Studio Code
+.vscode/
+
+# Unity
+src/UniTime/Builds/
+src/UniTime/Library/
+src/UniTime/Logs/
+src/UniTime/Temp/
+src/UniTime/UserSettings/
+
+src/UniTime/*.csproj
+src/UniTime/*.sln
+src/UniTime/Packages/packages-lock.json
+
+# Unity CodeCoverage
+src/UniTime/CodeCoverage/
+src/UniTime/ProjectSettings/Packages/com.unity.testtools.codecoverage/

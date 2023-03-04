@@ -1,0 +1,16 @@
+{
+  "name": "com.chikacc.unitime",
+  "displayName": "UniTime",
+  "author": "Chika Chang",
+  "version": "0.0.0-development",
+  "unity": "2021.3",
+  "description": "Provides a testable time integration for Unity.",
+  "license": "MIT",
+  "category": "Scripting",
+  "samples": [
+    {
+      "displayName": "Samples",
+      "path": "Samples~"
+    }
+  ]
+}

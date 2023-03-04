@@ -1,0 +1,9 @@
+{
+  "name": "UniTime.Samples.Editor",
+  "rootNamespace": "UniTime.Samples.Editor",
+  "references": [
+    "UniTime.Samples"
+  ],
+  "includePlatforms": ["Editor"],
+  "defineConstraints": ["UNITY_EDITOR"]
+}

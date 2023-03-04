@@ -1,0 +1,8 @@
+{
+  "name": "UniTime.Samples",
+  "rootNamespace": "UniTime.Samples",
+  "references": [
+    "Unity.TextMeshPro",
+    "UniTime"
+  ]
+}

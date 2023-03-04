@@ -1,0 +1,26 @@
+{
+  "name": "UniTime",
+  "rootNamespace": "UniTime",
+  "references": [
+    "UniRx",
+    "UniTask",
+    "VContainer"
+  ],
+  "versionDefines": [
+    {
+      "name": "com.cysharp.unitask",
+      "expression": "",
+      "define": "UNITIME_UNITASK_SUPPORT"
+    },
+    {
+      "name": "com.neuecc.unirx",
+      "expression": "",
+      "define": "UNITIME_UNIRX_SUPPORT"
+    },
+    {
+      "name": "jp.hadashikick.vcontainer",
+      "expression": "",
+      "define": "UNITIME_VCONTAINER_SUPPORT"
+    }
+  ]
+}
