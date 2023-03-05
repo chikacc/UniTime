@@ -1,0 +1,63 @@
+name: Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - src
+  pull_request:
+    branches:
+      - main
+    paths:
+      - src
+
+jobs:
+  test:
+    name: Test ${{ matrix.testMode }} with ${{ matrix.unityVersion }}
+    strategy:
+      fail-fast: false
+      matrix:
+        unityVersion:
+          - 2023.1.0b1
+          - 2021.3.0f1
+        projectPath: [src/UniTime]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Cache library
+        uses: actions/cache@v3
+        env:
+          PROJECT_PATH: ${{ matrix.projectPath }}
+        with:
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ matrix.unityVersion }}-${{ hashFiles('${{ env.PROJECT_PATH }}/Assets/**', '${{ env.PROJECT_PATH }}/Packages/**', '${{ env.PROJECT_PATH }}/ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.unityVersion }}-
+            Library-
+      - name: Run tests
+        uses: game-ci/unity-test-runner@v2
+        id: tests
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          customImage: mobsakai/unity3d:${{ matrix.unityVersion }}
+          projectPath: ${{ matrix.projectPath }}
+          customParameters: -nographics
+          artifactsPath: artifacts-${{ matrix.unityVersion }}
+          coverageOptions: 'generateAdditionalMetrics;generateHtmlReport;generateBadgeReport;assemblyFilters:+UniTime'
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          checkName: Test Results with ${{ matrix.unityVersion }}
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: Test results with ${{ matrix.unityVersion }}
+          path: ${{ steps.tests.outputs.artifactsPath }}
+      - name: Upload coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: Coverage results with ${{ matrix.unityVersion }}
+          path: ${{ steps.tests.outputs.coveragePath }}
