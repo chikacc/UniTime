@@ -1,0 +1,101 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag name"
+        required: true
+      prerelease:
+        description: "Prerelease"
+        required: false
+        type: boolean
+        default: false
+      draft:
+        description: "Draft"
+        required: false
+        type: boolean
+        default: false
+      dry-run:
+        description: "Dry run"
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  update-packagejson:
+    name: Update package.json
+    uses: chikacc/Actions/.github/workflows/update-packagejson.yml@main
+    with:
+      file-path: src/UniTime/Assets/Plugins/UniTime/package.json
+      tag: ${{ inputs.tag }}
+      push-tag: false
+      dry-run: ${{ inputs.dry-run }}
+  build-unitypackage:
+    name: Build unitypackage with ${{ matrix.unityVersion }}
+    needs: [update-packagejson]
+    strategy:
+      matrix:
+        unityVersion: [2023.1.0b1]
+        projectPath: [src/UniTime]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Print commit sha
+        run: echo ${{ needs.update-packagejson.outputs.sha }}
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ needs.update-packagejson.outputs.sha }}
+      - name: Cache library
+        uses: actions/cache@v3
+        env:
+          PROJECT_PATH: ${{ matrix.projectPath }}
+        with:
+          path: ${{ matrix.projectPath }}/Library
+          key: Library-${{ matrix.unityVersion }}-${{ hashFiles('${{ env.PROJECT_PATH }}/Assets/**', '${{ env.PROJECT_PATH }}/Packages/**', '${{ env.PROJECT_PATH }}/ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.unityVersion }}-
+            Library-
+      - name: Export unitypackage
+        uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          customImage: mobsakai/unity3d:${{ matrix.unityVersion }}
+          projectPath: ${{ matrix.projectPath }}
+          buildMethod: PackageExporter.Export
+          customParameters: -nographics
+          versioning: None
+      - name: Check meta files
+        uses: chikacc/Actions/.github/actions/check-meta-files@main
+        with:
+          directory: ${{ matrix.projectPath }}
+      - name: Upload unitypackage
+        uses: actions/upload-artifact@v3
+        with:
+          name: UniTime.${{ inputs.tag }}.unitypackage
+          path: ./${{ matrix.projectPath }}/UniTime.${{ inputs.tag }}.unitypackage
+          if-no-files-found: error
+  create-release:
+    name: Create release
+    needs: [update-packagejson, build-unitypackage]
+    uses: chikacc/Actions/.github/workflows/create-release.yml@main
+    with:
+      commit-id: ${{ needs.update-packagejson.outputs.sha }}
+      tag: ${{ inputs.tag }}
+      push-tag: ${{ inputs.dry-run }}
+      prerelease: ${{ inputs.prerelease }}
+      draft: ${{ inputs.draft }}
+      unitypackage-upload: true
+      unitypackage-name: UniTime.${{ inputs.tag }}.unitypackage
+      unitypackage-path: ./UniTime.${{ inputs.tag }}.unitypackage/UniTime.${{ inputs.tag }}.unitypackage
+      dry-run: ${{ inputs.dry-run }}
+    secrets: inherit
+  cleanup-packagejson:
+    name: Cleanup package.json branch
+    if: needs.update-packagejson.outputs.is-branch-created == 'true'
+    needs: [update-packagejson, create-release]
+    uses: chikacc/Actions/.github/workflows/clean-packagejson-branch.yml@main
+    with:
+      branch: ${{ needs.update-packagejson.outputs.branch-name }}
