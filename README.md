@@ -1,6 +1,7 @@
 # UniTime
 
 [![test](https://github.com/chikacc/UniTime/actions/workflows/test.yml/badge.svg)](https://github.com/chikacc/UniTime/actions/workflows/test.yml)
+[![openupm](https://img.shields.io/npm/v/com.chikacc.unitime?label=openupm&registry_uri=https://package.openupm.com)](https://openupm.com/packages/com.chikacc.unitime)
 [![releases](https://img.shields.io/github/v/release/chikacc/UniTime?display_name=tag&include_prereleases&sort=semver)](https://github.com/chikacc/UniTime/releases)
 [![release data](https://img.shields.io/github/release-date-pre/chikacc/UniTime)](https://github.com/chikacc/UniTime/releases)
 ![unity](https://img.shields.io/badge/unity-2021.3%20or%20later-green)
