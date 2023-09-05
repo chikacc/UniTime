@@ -44,7 +44,7 @@ jobs:
       - name: Print commit sha
         run: echo ${{ needs.update-packagejson.outputs.sha }}
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ needs.update-packagejson.outputs.sha }}
       - name: Cache library
