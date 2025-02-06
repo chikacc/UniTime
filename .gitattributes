@@ -43,9 +43,9 @@
 *.shadersubgraph text eol=lf
 
 # Unity plugin
-Assets/Plugins/**/* -text
+src/UniTime/Assets/Plugins/**/* -text
 
-"Assets/TextMesh Pro/**/*" -text
+"src/UniTime/Assets/TextMesh Pro/**/*" -text
 
 # Generated code
 *Generated* -text
